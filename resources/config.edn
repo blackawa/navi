@@ -1,0 +1,17 @@
+{:navi.component/http {:port #long #or [#env PORT 3000]
+                       :handler #ig/ref :navi.component/endpoint
+                       :logger #ig/ref :navi.component/logger}
+ :navi.component/routes ["" [["/" {:post :navi.handler/create}]
+                             [true :navi.handler.not-found/index]]]
+ :navi.component/logger {:level #profile {:default :info :dev :debug}}
+ :navi.component/endpoint
+ {:middleware #ig/ref :navi.component/middleware
+  :routes #ig/ref :navi.component/routes
+  :handlers {:navi.handler/create #ig/ref :navi.handler/create
+             :navi.handler.not-found/index #ig/ref :navi.handler.not-found/index}}
+ :navi.component/middleware {:logger #ig/ref :navi.component/logger
+                             :dev? #profile {:dfault false :dev true}}
+ :navi.component/nrepl {:logger #ig/ref :navi.component/logger}
+ ;; Handlers
+ :navi.handler/create {:logger #ig/ref :navi.component/logger}
+ :navi.handler.not-found/index {}}
