@@ -24,4 +24,6 @@
                                   [ring/ring-mock "0.3.2"]
                                   [com.gearswithingears/shrubbery "0.4.1"]]
                    :source-paths ["dev/src" "src"]
-                   :repl-options {:init-ns user}}})
+                   :repl-options {:init-ns user
+                                  :host "0.0.0.0"
+                                  :port 43509}}})
