@@ -16,6 +16,6 @@ You can see `swagger.yaml` to check API specification.
 
 ## Deployment
 
-TODO: add k8s deployment script.
+To deploy to heroku, run
 
-:construction:
+    ./deploy.sh
