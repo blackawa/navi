@@ -24,10 +24,10 @@
                  [org.clojure/tools.nrepl "0.2.13"]
                  [clj-http "3.9.1"]
                  [cheshire "5.8.0"]
-                 [rum "0.11.2"]
-                 [lein-heroku "0.5.3"]]
+                 [rum "0.11.2"]]
   :main ^:skip-aot navi.app
   :uberjar-name "navi.jar"
+  :plugins [[lein-heroku "0.5.3"]]
   :heroku {:app-name "boiling-stream-79705"}
   :profiles {:uberjar {:aot :all}
              :dev {:dependencies [[integrant/repl "0.3.1"]

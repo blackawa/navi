@@ -26,4 +26,6 @@
   (let [config (config)
         keys (map keyword (or args [:navi.component/http]))]
     (println "load namespaces:" (ig/load-namespaces config))
+    ;; Migrate for heroku
+    (ig/init config [:duct.migrator/ragtime])
     (ig/init config keys)))
