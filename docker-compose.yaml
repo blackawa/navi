@@ -1,0 +1,10 @@
+version: '3'
+services:
+  db:
+    image: 'postgres:10.1'
+    ports:
+      - '5433:5432'
+    environment:
+      POSTGRES_PASSWORD: 'p@ssw0rd'
+      POSTGRES_USER: 'app'
+      POSTGRES_DB: 'app'

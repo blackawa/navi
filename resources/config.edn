@@ -2,16 +2,38 @@
                        :handler #ig/ref :navi.component/endpoint
                        :logger #ig/ref :navi.component/logger}
  :navi.component/routes ["" [["/" {:post :navi.handler/create}]
+                             ["/oauth"
+                              :navi.handler.oauth/index
+                              ["/callback" :navi.handler.oauth/callback]]
                              [true :navi.handler.not-found/index]]]
  :navi.component/logger {:level #profile {:default :info :dev :debug}}
  :navi.component/endpoint
  {:middleware #ig/ref :navi.component/middleware
   :routes #ig/ref :navi.component/routes
   :handlers {:navi.handler/create #ig/ref :navi.handler/create
-             :navi.handler.not-found/index #ig/ref :navi.handler.not-found/index}}
+             :navi.handler.not-found/index #ig/ref :navi.handler.not-found/index
+             :navi.handler.oauth/index #ig/ref :navi.handler.oauth/index
+             :navi.handler.oauth/callback #ig/ref :navi.handler.oauth/callback}}
  :navi.component/middleware {:logger #ig/ref :navi.component/logger
                              :dev? #profile {:dfault false :dev true}}
  :navi.component/nrepl {:logger #ig/ref :navi.component/logger}
+ ;; Database
+ :duct.database.sql/hikaricp {:jdbc-url #or [#env JDBC_DATABASE_URL "jdbc:postgresql://127.0.0.1:5433/app"]
+                              :username #or [#env JDBC_DATABASE_USERNAME "app"]
+                              :password #or [#env JDBC_DATABASE_PASSWORD "p@ssw0rd"]
+                              :stringtype "unspecified"}
+ :duct.migrator/ragtime {:database #ig/ref :duct.database.sql/hikaricp
+                         :strategy #profile {:default :raise-error
+                                             :dev :rebase}
+                         :migrations [#ig/ref :navi.migration/create-workspaces
+                                      #ig/ref :navi.migration/create-bots]}
+ ;; Migrations
+ [:duct.migrator.ragtime/sql :navi.migration/create-workspaces]
+ #migration ["migrations/create_workspaces"]
+ [:duct.migrator.ragtime/sql :navi.migration/create-bots]
+ #migration ["migrations/create_bots"]
  ;; Handlers
  :navi.handler/create {:logger #ig/ref :navi.component/logger}
- :navi.handler.not-found/index {}}
+ :navi.handler.not-found/index {}
+ :navi.handler.oauth/index {}
+ :navi.handler.oauth/callback {}}

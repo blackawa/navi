@@ -21,3 +21,6 @@
 
 (defn not-found [body]
   {:status 404 :body body})
+
+(defn html [res]
+  (assoc-in res [:headers "Content-Type"] "text/html; charset=utf-8"))
