@@ -1,7 +1,10 @@
 (ns navi.util.response)
 
-(defn ok [body]
-  {:status 200 :body body})
+(defn ok
+  ([]
+   (ok nil))
+  ([body]
+   {:status 200 :body body}))
 
 (defn created
   ([body] (created body nil))

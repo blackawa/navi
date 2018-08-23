@@ -15,7 +15,9 @@
                  [bidi "2.1.3"]
                  [bouncer "1.0.1"]
                  [com.taoensso/timbre "4.10.0"]
-                 [org.clojure/tools.nrepl "0.2.13"]]
+                 [org.clojure/tools.nrepl "0.2.13"]
+                 [clj-http "3.9.1"]
+                 [cheshire "5.8.0"]]
   :main ^:skip-aot navi.app
   :uberjar-name "navi.jar"
   :profiles {:uberjar {:aot :all}

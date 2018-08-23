@@ -15,6 +15,6 @@
 
 (defmethod ig/init-key :navi.component/middleware [_ {:keys [logger dev?]}]
   (fn [handler] (-> handler
-                    (wrap-defaults api-defaults)
+                    (wrap-log logger)
                     wrap-format
-                    (wrap-log logger))))
+                    (wrap-defaults api-defaults))))
