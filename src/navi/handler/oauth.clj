@@ -1,20 +1,26 @@
 (ns navi.handler.oauth
-  (:require [integrant.core :as ig]
+  (:require [cemerick.url :refer [url]]
+            [integrant.core :as ig]
             [rum.core :as rum]
             [navi.util.response :as res]))
 
-(rum/defc index-view []
-  [:html
-   [:head]
-   [:body
-    [:section
-     [:a {:href "https://slack.com/oauth/authorize?scope=bot&client_id=224069681875.420226130256"}
-      [:img {:alt "Add to Slack" :height "40" :width "139" :src "https://platform.slack-edge.com/img/add_to_slack.png" :srcset "https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x"}]]]]])
+(rum/defc index-view [client-id]
+  (let [scopes ["chat.write"]
+        base-url (url "https://slack.com/oauth/authorize")
+        query-params {:scope (clojure.string/join " " scopes)
+                      :client_id client-id}
+        oauth-request-url (-> base-url (assoc :query query-params) str)]
+    [:html
+     [:head]
+     [:body
+      [:section
+       [:a {:href oauth-request-url}
+        [:img {:alt "Add to Slack" :height "40" :width "139" :src "https://platform.slack-edge.com/img/add_to_slack.png" :srcset "https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x"}]]]]]))
 
-(defmethod ig/init-key ::index [_ _]
+(defmethod ig/init-key ::index [_ {{client-id :client-id client-secret :client-secret}
+                                   :slack}]
   (fn [req]
-    (-> (res/ok (rum/render-html (index-view)))
-        res/html)))
+    (-> (res/ok (rum/render-html (index-view client-id))) res/html)))
 
 (defmethod ig/init-key ::callback [_ _]
   (fn [req]

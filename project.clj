@@ -24,7 +24,8 @@
                  [org.clojure/tools.nrepl "0.2.13"]
                  [clj-http "3.9.1"]
                  [cheshire "5.8.0"]
-                 [rum "0.11.2"]]
+                 [rum "0.11.2"]
+                 [com.cemerick/url "0.1.1"]]
   :main ^:skip-aot navi.app
   :uberjar-name "navi.jar"
   :plugins [[lein-heroku "0.5.3"]]

@@ -16,7 +16,8 @@
              :navi.handler.oauth/callback #ig/ref :navi.handler.oauth/callback}}
  :navi.component/middleware {:logger #ig/ref :navi.component/logger
                              :dev? #profile {:dfault false :dev true}}
- :navi.component/nrepl {:logger #ig/ref :navi.component/logger}
+ :navi.component/slack {:client-id #or [#env SLACK_CLIENT_ID "224069681875.420226130256"]
+                        :client-secret #or [#env SLACK_CLIENT_SECRET "80b23b9f6ff99bc1e82f0d5f29a67e9f"]}
  ;; Database
  :duct.database.sql/hikaricp {:jdbc-url #or [#env JDBC_DATABASE_URL "jdbc:postgresql://127.0.0.1:5433/app"]
                               :username #or [#env JDBC_DATABASE_USERNAME "app"]
@@ -35,5 +36,5 @@
  ;; Handlers
  :navi.handler/create {:logger #ig/ref :navi.component/logger}
  :navi.handler.not-found/index {}
- :navi.handler.oauth/index {}
+ :navi.handler.oauth/index {:slack #ig/ref :navi.component/slack}
  :navi.handler.oauth/callback {}}
