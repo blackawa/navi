@@ -26,15 +26,14 @@
  :duct.migrator/ragtime {:database #ig/ref :duct.database.sql/hikaricp
                          :strategy #profile {:default :raise-error
                                              :dev :rebase}
-                         :migrations [#ig/ref :navi.migration/create-workspaces
-                                      #ig/ref :navi.migration/create-bots]}
+                         :migrations [#ig/ref :navi.migration/create-workspaces]}
  ;; Migrations
  [:duct.migrator.ragtime/sql :navi.migration/create-workspaces]
  #migration ["migrations/create_workspaces"]
- [:duct.migrator.ragtime/sql :navi.migration/create-bots]
- #migration ["migrations/create_bots"]
  ;; Handlers
  :navi.handler/create {:logger #ig/ref :navi.component/logger}
  :navi.handler.not-found/index {}
  :navi.handler.oauth/index {:slack #ig/ref :navi.component/slack}
- :navi.handler.oauth/callback {}}
+ :navi.handler.oauth/callback {:slack #ig/ref :navi.component/slack
+                               :db #ig/ref :duct.database.sql/hikaricp
+                               :logger #ig/ref :navi.component/logger}}
