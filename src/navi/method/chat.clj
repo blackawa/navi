@@ -15,4 +15,5 @@
        (throw (ex-info "Failed to post message."
                        {:causes :slack-returns-error
                         :error error
-                        :body body}))))))
+                        :req params
+                        :res body}))))))

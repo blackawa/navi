@@ -5,18 +5,34 @@
             [navi.event.url-verification :as url-verification]
             [navi.util.response :as res]))
 
-(defmethod ig/init-key ::create [_ {:keys [logger]}]
+(defn- no-match [logger body-params]
+  (logger/log logger :warn ::event-callback-no-match body-params)
+  (res/ok))
+
+(defn- dispatch-event-callback
+  [db logger
+   {{channel-type :channel_type event-type :type :as event} :event
+    :as body-params}]
+  (cond
+    (and (= event-type "message")
+         (= channel-type "app_home"))
+    (message/app-home body-params)
+    (and (= event-type "message")
+         (= channel-type "channel"))
+    (message/channels db body-params)
+    :else (no-match logger body-params)))
+
+(defmethod ig/init-key ::create [_ {:keys [logger db]}]
   ;; 全部のAPIコールを一度このエンドポイントで受ける
   ;; TODO: validate token
-  (fn [{{:keys [type] {channel-type :channel_type event-type :type :as event} :event :as body-params} :body-params :as req}]
-    (cond
+  (fn [{{:keys [type] :as body-params} :body-params :as req}]
+    (logger/log logger :info :receive-event body-params)
+    (condp = type
       ;; URLチェック
-      (= type "url_verification")
+      "url_verification"
       (url-verification/verify body-params)
-      ;; メッセージ受け取り
-      (and (= type "event_callback")
-           (= event-type "message")
-           (= channel-type "app_home"))
-      (message/app-home body-params)
-      :else (logger/log logger :warn ::create {:message "No match" :channel-type channel-type :event-type event-type :type type}))
-    (res/ok)))
+      ;; 通常のEvents APIコールバック
+      "event_callback"
+      (dispatch-event-callback db logger body-params)
+      ;; 何にもマッチしないときのフォールバック
+      (no-match logger body-params))))

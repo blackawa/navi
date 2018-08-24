@@ -24,14 +24,14 @@
                               :password #or [#env JDBC_DATABASE_PASSWORD "p@ssw0rd"]
                               :stringtype "unspecified"}
  :duct.migrator/ragtime {:database #ig/ref :duct.database.sql/hikaricp
-                         :strategy #profile {:default :raise-error
-                                             :dev :rebase}
+                         :strategy #profile {:default :raise-error :dev :rebase}
                          :migrations [#ig/ref :navi.migration/create-workspaces]}
  ;; Migrations
  [:duct.migrator.ragtime/sql :navi.migration/create-workspaces]
  #migration ["migrations/create_workspaces"]
  ;; Handlers
- :navi.handler/create {:logger #ig/ref :navi.component/logger}
+ :navi.handler/create {:logger #ig/ref :navi.component/logger
+                       :db #ig/ref :duct.database.sql/hikaricp}
  :navi.handler.not-found/index {}
  :navi.handler.oauth/index {:slack #ig/ref :navi.component/slack}
  :navi.handler.oauth/callback {:slack #ig/ref :navi.component/slack
