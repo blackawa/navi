@@ -10,7 +10,7 @@
    (let [url "https://slack.com/api/chat.postMessage"
          params (merge {:token token :channel channel :text text} optional-params)
          {body :body} (http/post url {:form-params params :content-type :json})
-         {ok? :ok error :error :as body} (json/parse-string body)]
+         {ok? "ok" error "error" :as body} (json/parse-string body)]
      (when (not ok?)
        (throw (ex-info "Failed to post message."
                        {:causes :slack-returns-error

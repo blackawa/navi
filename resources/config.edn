@@ -2,10 +2,10 @@
                        :handler #ig/ref :navi.component/endpoint
                        :logger #ig/ref :navi.component/logger}
  :navi.component/routes ["" [["/" {:post :navi.handler/create}]
-                             ["/oauth"
-                              :navi.handler.oauth/index
-                              ["/callback" :navi.handler.oauth/callback]]
+                             ["/oauth" [["" :navi.handler.oauth/index]
+                                        ["/callback" :navi.handler.oauth/callback]]]
                              [true :navi.handler.not-found/index]]]
+
  :navi.component/logger {:level #profile {:default :info :dev :debug}}
  :navi.component/endpoint
  {:middleware #ig/ref :navi.component/middleware
