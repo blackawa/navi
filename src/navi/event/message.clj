@@ -5,7 +5,7 @@
 (defn app-home [{token :token {channel :channel text :text user :user} :event}]
   (chat/post-message token channel (str text "って言いました？")))
 
-(defn channels [db {team-id :team-id
+(defn channels [db {team-id :team_id
                     {channel :channel text :text user :user} :event}]
   (let [{token :access_token} (workspace/find-by-team-id db team-id)]
-    (chat/post-message token channel (str "@<" user "> 「" text "」って言いました？"))))
+    (chat/post-message token channel (str "<@" user "> 「" text "」って言いました？"))))

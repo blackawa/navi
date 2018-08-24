@@ -17,9 +17,8 @@
     (and (= event-type "message")
          (= channel-type "app_home"))
     (message/app-home body-params)
-    (and (= event-type "message")
-         (= channel-type "channel"))
-    (message/channels db body-params)
+    ;; (and (= event-type "message") (= channel-type "channel"))
+    ;; (message/channels db body-params)
     :else (no-match logger body-params)))
 
 (defmethod ig/init-key ::create [_ {:keys [logger db]}]
