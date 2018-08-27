@@ -14,11 +14,15 @@
    {{channel-type :channel_type event-type :type :as event} :event
     :as body-params}]
   (cond
-    (and (= event-type "message")
-         (= channel-type "app_home"))
+    ;; message.app_home
+    (and (= event-type "message") (= channel-type "app_home"))
     (message/app-home body-params)
-    ;; (and (= event-type "message") (= channel-type "channel"))
-    ;; (message/channels db body-params)
+    ;; message.channels
+    (and (= event-type "message") (= channel-type "channel"))
+    (do (logger/log logger :info :receive-message-channel body-params)
+        {:status 200}
+        ;; (message/channels db body-params)
+        )
     :else (no-match logger body-params)))
 
 (defmethod ig/init-key ::create [_ {:keys [logger db]}]

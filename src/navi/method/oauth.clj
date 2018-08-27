@@ -13,6 +13,7 @@
          access-token "access_token"
          team-id "team_id"
          scopes "scopes"
+         app-user-id "app_user_id"
          :as res} (json/parse-string body)]
     (if (not ok?)
       (throw (ex-info "Failed to acquire access token"
@@ -22,4 +23,6 @@
                        :body res}))
       (do
         (logger/log logger :info :acquire-access-token res)
-        (workspace/create db {:team-id team-id :access-token access-token})))))
+        (workspace/create db {:team-id team-id
+                              :access-token access-token
+                              :app-user-id app-user-id})))))
