@@ -6,7 +6,7 @@
             [navi.util.response :as res]))
 
 (rum/defc index-view [client-id]
-  (let [scopes ["chat:write" "channels:history"]
+  (let [scopes ["chat:write" "channels:history" "groups:history"]
         base-url (url "https://slack.com/oauth/authorize")
         query-params {:scope (clojure.string/join " " scopes)
                       :client_id client-id}

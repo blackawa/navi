@@ -14,15 +14,22 @@
    {{channel-type :channel_type event-type :type :as event} :event
     :as body-params}]
   (cond
-    ;; message.app_home
+    ;; message.app_home == AppにDMを送った時のイベント
     (and (= event-type "message") (= channel-type "app_home"))
-    (message/app-home body-params)
-    ;; message.channels
+    (do (logger/log logger :info :receive-message-app-home body-params)
+        {:status 200}
+        ;; (message/app-home body-params)
+        )
+    ;; message.channels == Appが参加しているpublicチャンネルに投稿があった時のイベント
     (and (= event-type "message") (= channel-type "channel"))
     (do (logger/log logger :info :receive-message-channel body-params)
         {:status 200}
         ;; (message/channels db body-params)
         )
+    ;; message.channels == Appが参加しているpublicチャンネルに投稿があった時のイベント
+    (and (= event-type "message") (= channel-type "group"))
+    (do (logger/log logger :info :receive-message-group body-params)
+        {:status 200})
     :else (no-match logger body-params)))
 
 (defmethod ig/init-key ::create [_ {:keys [logger db]}]
