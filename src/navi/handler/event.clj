@@ -1,4 +1,4 @@
-(ns navi.handler
+(ns navi.handler.event
   (:require [integrant.core :as ig]
             [navi.boundary.logger :as logger]
             [navi.event.message :as message]

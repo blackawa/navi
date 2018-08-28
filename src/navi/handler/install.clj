@@ -1,4 +1,4 @@
-(ns navi.handler.oauth
+(ns navi.handler.install
   (:require [cemerick.url :refer [url]]
             [integrant.core :as ig]
             [rum.core :as rum]
