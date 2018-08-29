@@ -22,8 +22,22 @@
                              :dev? #profile {:dfault false :dev true}}
  :navi.component/slack {:client-id #or [#env SLACK_CLIENT_ID "224069681875.420226130256"]
                         :client-secret #or [#env SLACK_CLIENT_SECRET "80b23b9f6ff99bc1e82f0d5f29a67e9f"]}
- :navi.component.rotate/channel {}
- :navi.component/rotate {:channel #ig/ref :navi.component.rotate/channel}
+ ;; Handlers
+ :navi.handler.not-found/index {}
+ :navi.handler.install/index {:slack #ig/ref :navi.component/slack}
+ :navi.handler.install/callback {:slack #ig/ref :navi.component/slack
+                                 :db #ig/ref :duct.database.sql/hikaricp
+                                 :logger #ig/ref :navi.component/logger}
+ :navi.handler.event/create {:logger #ig/ref :navi.component/logger
+                             :db #ig/ref :duct.database.sql/hikaricp}
+ :navi.handler.command/rotate {:slack #ig/ref :navi.component/slack
+                               :db #ig/ref :duct.database.sql/hikaricp
+                               :logger #ig/ref :navi.component/logger
+                               :channel #ig/ref :navi.channel/rotate}
+ ;; Channels
+ :navi.channel/rotate {}
+ ;; Workers
+ :navi.worker/rotate {:channel #ig/ref :navi.channel/rotate}
  ;; Database
  :duct.database.sql/hikaricp {:jdbc-url #or [#env JDBC_DATABASE_URL "jdbc:postgresql://127.0.0.1:5433/app"]
                               :username #or [#env JDBC_DATABASE_USERNAME "app"]
@@ -40,16 +54,4 @@
  [:duct.migrator.ragtime/sql :navi.migration/create-rotations]
  #migration ["migrations/create_rotations"]
  [:duct.migrator.ragtime/sql :navi.migration/create-rotation-users]
- #migration ["migrations/create_rotation_users"]
- ;; Handlers
- :navi.handler.not-found/index {}
- :navi.handler.install/index {:slack #ig/ref :navi.component/slack}
- :navi.handler.install/callback {:slack #ig/ref :navi.component/slack
-                                 :db #ig/ref :duct.database.sql/hikaricp
-                                 :logger #ig/ref :navi.component/logger}
- :navi.handler.event/create {:logger #ig/ref :navi.component/logger
-                             :db #ig/ref :duct.database.sql/hikaricp}
- :navi.handler.command/rotate {:slack #ig/ref :navi.component/slack
-                               :db #ig/ref :duct.database.sql/hikaricp
-                               :logger #ig/ref :navi.component/logger
-                               :channel #ig/ref :navi.component.rotate/channel}}
+ #migration ["migrations/create_rotation_users"]}
