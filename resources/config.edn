@@ -1,6 +1,6 @@
-{:navi.component/http {:port #long #or [#env PORT 3000]
-                       :handler #ig/ref :navi.component/endpoint
-                       :logger #ig/ref :navi.component/logger}
+{[:navi.component/http :navi/app] {:port #long #or [#env PORT 3000]
+                                   :handler #ig/ref :navi.component/endpoint
+                                   :logger #ig/ref :navi.component/logger}
  :navi.component/routes ["" [["/" :navi.handler.install/index]
                              ["/install" [["" :navi.handler.install/index]
                                           ["/callback" :navi.handler.install/callback]]]
@@ -37,7 +37,9 @@
  ;; Channels
  :navi.channel/rotate {}
  ;; Workers
- :navi.worker/rotate {:channel #ig/ref :navi.channel/rotate}
+ [:navi.worker/rotate :navi/app] {:channel #ig/ref :navi.channel/rotate
+                                  :logger #ig/ref :navi.component/logger
+                                  :db #ig/ref :duct.database.sql/hikaricp}
  ;; Database
  :duct.database.sql/hikaricp {:jdbc-url #or [#env JDBC_DATABASE_URL "jdbc:postgresql://127.0.0.1:5433/app"]
                               :username #or [#env JDBC_DATABASE_USERNAME "app"]

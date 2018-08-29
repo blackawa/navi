@@ -19,9 +19,11 @@
   (create [{db :spec} {rotation-name :name users :users}]
     (jdbc/with-db-transaction [tran db]
       (let [rotation-id (->> {:name rotation-name}
-                             (jdbc/insert! db)
+                             (jdbc/insert! db :rotations)
+                             first
                              :id)]
         (->> users
              ;; TODO: userのdisplay nameからuserIdを引くのはかなり重い処理になるので、そもそもこの関数自体core.asyncごしに実行したほうがよさそう
-             ;; TODO: 2人以上存在するdisplay nameを指定された時はエラー
-             (map #(assoc % :rotation_id rotation-id)))))))
+             (map #(assoc {} :slack_user_id %))
+             (map #(assoc % :rotation_id rotation-id))
+             (jdbc/insert-multi! db :rotation_users))))))

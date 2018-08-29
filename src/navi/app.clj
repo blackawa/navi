@@ -24,7 +24,7 @@
 (defn -main
   [& args]
   (let [config (config)
-        keys (map keyword (or args [:navi.component/http]))]
+        keys (map keyword (or args [:navi/app]))]
     (println "load namespaces:" (ig/load-namespaces config))
     ;; Migrate for heroku
     (ig/init config [:duct.migrator/ragtime])
