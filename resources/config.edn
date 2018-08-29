@@ -22,6 +22,8 @@
                              :dev? #profile {:dfault false :dev true}}
  :navi.component/slack {:client-id #or [#env SLACK_CLIENT_ID "224069681875.420226130256"]
                         :client-secret #or [#env SLACK_CLIENT_SECRET "80b23b9f6ff99bc1e82f0d5f29a67e9f"]}
+ :navi.component.rotate/channel {}
+ :navi.component/rotate {:channel #ig/ref :navi.component.rotate/channel}
  ;; Database
  :duct.database.sql/hikaricp {:jdbc-url #or [#env JDBC_DATABASE_URL "jdbc:postgresql://127.0.0.1:5433/app"]
                               :username #or [#env JDBC_DATABASE_USERNAME "app"]
@@ -49,4 +51,5 @@
                              :db #ig/ref :duct.database.sql/hikaricp}
  :navi.handler.command/rotate {:slack #ig/ref :navi.component/slack
                                :db #ig/ref :duct.database.sql/hikaricp
-                               :logger #ig/ref :navi.component/logger}}
+                               :logger #ig/ref :navi.component/logger
+                               :channel #ig/ref :navi.component.rotate/channel}}

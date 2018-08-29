@@ -18,7 +18,7 @@
          first))
   (create [{db :spec} {rotation-name :name users :users}]
     (jdbc/with-db-transaction [tran db]
-      (let [rotation-id (->> {:name rotation-nam}
+      (let [rotation-id (->> {:name rotation-name}
                              (jdbc/insert! db)
                              :id)]
         (->> users
