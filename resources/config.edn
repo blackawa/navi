@@ -6,7 +6,7 @@
                                           ["/callback" :navi.handler.install/callback]]]
                              ["/events" {:post :navi.handler.event/create}]
                              ["/commands"
-                              [["/assign" {:post :navi.handler.command/assign}]]]
+                              [["/rotate" {:post :navi.handler.command/rotate}]]]
                              [true :navi.handler.not-found/index]]]
 
  :navi.component/logger {:level #profile {:default :info :dev :debug}}
@@ -17,7 +17,7 @@
              :navi.handler.not-found/index #ig/ref :navi.handler.not-found/index
              :navi.handler.install/index #ig/ref :navi.handler.install/index
              :navi.handler.install/callback #ig/ref :navi.handler.install/callback
-             :navi.handler.command/assign #ig/ref :navi.handler.command/assign}}
+             :navi.handler.command/rotate #ig/ref :navi.handler.command/rotate}}
  :navi.component/middleware {:logger #ig/ref :navi.component/logger
                              :dev? #profile {:dfault false :dev true}}
  :navi.component/slack {:client-id #or [#env SLACK_CLIENT_ID "224069681875.420226130256"]
@@ -29,10 +29,16 @@
                               :stringtype "unspecified"}
  :duct.migrator/ragtime {:database #ig/ref :duct.database.sql/hikaricp
                          :strategy #profile {:default :raise-error :dev :rebase}
-                         :migrations [#ig/ref :navi.migration/create-workspaces]}
+                         :migrations [#ig/ref :navi.migration/create-workspaces
+                                      #ig/ref :navi.migration/create-rotations
+                                      #ig/ref :navi.migration/create-rotation-users]}
  ;; Migrations
  [:duct.migrator.ragtime/sql :navi.migration/create-workspaces]
  #migration ["migrations/create_workspaces"]
+ [:duct.migrator.ragtime/sql :navi.migration/create-rotations]
+ #migration ["migrations/create_rotations"]
+ [:duct.migrator.ragtime/sql :navi.migration/create-rotation-users]
+ #migration ["migrations/create_rotation_users"]
  ;; Handlers
  :navi.handler.not-found/index {}
  :navi.handler.install/index {:slack #ig/ref :navi.component/slack}
@@ -41,7 +47,6 @@
                                  :logger #ig/ref :navi.component/logger}
  :navi.handler.event/create {:logger #ig/ref :navi.component/logger
                              :db #ig/ref :duct.database.sql/hikaricp}
- :navi.handler.command/assign {:slack #ig/ref :navi.component/slack
+ :navi.handler.command/rotate {:slack #ig/ref :navi.component/slack
                                :db #ig/ref :duct.database.sql/hikaricp
                                :logger #ig/ref :navi.component/logger}}
-
