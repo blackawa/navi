@@ -3,26 +3,22 @@
             [clojure.core.async :refer [chan close! go-loop <!]]
             [integrant.core :as ig]
             [navi.boundary.logger :refer [log]]
-            [navi.boundary.rotation :as rotation]))
+            [navi.boundary.rotation :as rotation]
+            [navi.validator.rotate :as validator]))
 
 (defmulti dispatch-rotate (fn [{[identifier] :text}] identifier))
 
-(defmethod dispatch-rotate "create" [{[_ rotation-name & candidates] :text :keys [response-url db logger]}]
-  ;; TODO: bouncerでバリデーションして適切なエラーメッセージを取得する
-  (let [error? (or (some #{rotation-name} ["create" "list" "delete" "help"])
-                   (rotation/find-by-name db rotation-name)
-                   (nil? candidates))]
-    (if error?
+(defmethod dispatch-rotate "create" [{[_ rotation-name & users] :text :keys [response-url db logger]}]
+  (let [entity {:name rotation-name :users users}
+        [errors _] (validator/validate-new-rotation entity db)]
+    (if errors
       (http/post response-url {:form-params {:response_type "ephemeral"
-                                             :text "ローテーションの作成に失敗しました。\n
-create/list/delete/helpという名前のローテーションは作れません。\n
-すでに同じ名前のローテーションがあります。\n
-メンバーが足りません。"}
+                                             :text (str "ローテーションの作成に失敗しました。\n"
+                                                        (clojure.string/join "\n" (flatten (vals errors))))}
                                :content-type :json})
       (do
-        ;; TODO: candidatesは全部ユーザー名もしくはユーザーグループ名でなければエラー
-        (rotation/create db {:name rotation-name
-                             :users candidates})
+        ;; TODO: usersは全部ユーザー名もしくはユーザーグループ名でなければエラー
+        (rotation/create db {:name rotation-name :users users})
         (http/post response-url {:form-params {:text "ローテーションを作成しました。 `/rotate ローテーション名` で担当者にメンションが飛びます。"}
                                  :content-type :json})))))
 
@@ -46,7 +42,6 @@ create/list/delete/helpという名前のローテーションは作れません
   )
 
 (defmethod ig/init-key :navi.worker/rotate [_ {:keys [channel db logger]}]
-  (println "Starting :navi.worker/rotate =====================")
   (go-loop []
     (when-let [rotate-command-params (<! channel)]
       (log logger :info ::receive-data rotate-command-params)

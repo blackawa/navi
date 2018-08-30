@@ -49,11 +49,14 @@
                          :strategy #profile {:default :raise-error :dev :rebase}
                          :migrations [#ig/ref :navi.migration/create-workspaces
                                       #ig/ref :navi.migration/create-rotations
-                                      #ig/ref :navi.migration/create-rotation-users]}
+                                      #ig/ref :navi.migration/create-rotation-users
+                                      #ig/ref :navi.migration/create-rotation-currents]}
  ;; Migrations
  [:duct.migrator.ragtime/sql :navi.migration/create-workspaces]
  #migration ["migrations/create_workspaces"]
  [:duct.migrator.ragtime/sql :navi.migration/create-rotations]
  #migration ["migrations/create_rotations"]
  [:duct.migrator.ragtime/sql :navi.migration/create-rotation-users]
- #migration ["migrations/create_rotation_users"]}
+ #migration ["migrations/create_rotation_users"]
+ [:duct.migrator.ragtime/sql :navi.migration/create-rotation-currents]
+ #migration ["migrations/create_rotation_currents"]}
