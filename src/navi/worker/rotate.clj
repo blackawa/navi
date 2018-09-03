@@ -8,7 +8,15 @@
 
 (defmulti dispatch-rotate (fn [{[identifier] :text}] identifier))
 
-(defmethod dispatch-rotate "create" [{[_ rotation-name & users] :text :keys [response-url db logger]}]
+(defn- fetch-slack-user-id [access-token usernames]
+  ;; TODO: 引数のusernamesから@を取る
+  ;; usernamesに入ってるusernameを全員チェックする
+  ;; チェックし終わったら複数のdisplay_nameがマッチした人がいないか調べる
+  ;; 全員ひとつのuser_idに紐付いてたらそれを返す
+  ;; 0または複数個のuser_idが紐付いてたらエラー
+  )
+
+(defmethod dispatch-rotate "create" [{[_ rotation-name & users] :text :keys [response-url team-id db logger]}]
   (let [entity {:name rotation-name :users users}
         [errors _] (validator/validate-new-rotation entity db)]
     (if errors
@@ -16,9 +24,9 @@
                                              :text (str "ローテーションの作成に失敗しました。\n"
                                                         (clojure.string/join "\n" (flatten (vals errors))))}
                                :content-type :json})
-      (do
-        ;; TODO: usersは全部ユーザー名もしくはユーザーグループ名でなければエラー
-        (rotation/create db {:name rotation-name :users users})
+      ;; TODO: usersは全部ユーザー名もしくはユーザーグループ名でなければエラー
+      (let [user-ids (fetch-slack-user-ids (:access_token (workspace/find-by-team-id team-id)) users)]
+        (rotation/create db {:name rotation-name :users user-ids})
         (http/post response-url {:form-params {:text "ローテーションを作成しました。 `/rotate ローテーション名` で担当者にメンションが飛びます。"}
                                  :content-type :json})))))
 

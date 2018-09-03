@@ -9,8 +9,9 @@
   [_ {:keys [db logger channel]
       {slack-client-id :client-id slack-client-secret :client-secret} :slack}]
   (fn [{{response-url :response_url
+         team-id :team_id
          text :text
          :as params} :params :as req}]
     (log logger :info :receive-rotate-command params)
-    (go (>! channel {:text text :response-url response-url}))
+    (go (>! channel {:text text :response-url response-url :team-id team-id}))
     (res/ok)))
